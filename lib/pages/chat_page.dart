@@ -1,6 +1,4 @@
 import 'package:chat/components/chat_bubble.dart';
-
-import '/services/chat/chat_service.dart';
 import 'package:chat/components/my_text_field.dart';
 import 'package:chat/services/chat/chat_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -35,6 +33,19 @@ class _ChatPageState extends State<ChatPage> {
     }
 
   }
+  final messages = FirebaseFirestore.instance.collection('/chat_room/sqgsKCJMnMdE8Wqd14Ee63RjQ9k2_yIB7qOcT9iOSoC7EDpCmguCxkW33/messages');
+//DELETE
+    Future deleteMessage(String docId) async {
+      return messages.doc(docId).delete();
+  }
+//UPDATE
+    Future<void> updateMessage(String docId, String NewMessage ){
+      return messages.doc(docId).update({
+        'message': NewMessage,
+        'timestamp': Timestamp.now(),
+      });
+
+}
 
   @override
   Widget build(BuildContext context) {
@@ -96,6 +107,15 @@ class _ChatPageState extends State<ChatPage> {
             Text(data['senderEmail']),
             const SizedBox(height: 5,),
             ChatBubble(message: data['message']),
+            IconButton(
+              onPressed: () => updateMessage(document.id, 'Text'),
+              icon: const Icon(Icons.update),
+            ),
+            IconButton(
+              onPressed: () => deleteMessage(document.id),
+              icon: const Icon(Icons.delete),
+            )
+
           ],
         ),
       ),
